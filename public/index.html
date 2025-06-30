@@ -1,0 +1,398 @@
+<!DOCTYPE html5>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastCash - Quick Online Loans</title>
+    <link rel="icon" href="img/icon.ico">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <h1>Fast💸Cash</h1>
+            </div>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#about-us">About Us</a></li>
+                    <li><a class="btn apply-now-link" href="#apply-now">Apply Now</a></li>
+                </ul>
+            </nav>
+
+	    <div class="mobile-header">
+		<button class="mobile-menu-btn" aria-label="Toggle navigation">
+		    <i class="fas fa-bars"></i>
+		</button>
+	    </div>
+	    
+	    <nav class="mobile-nav">
+		<ul>
+		    <li><a href="#features">Features</a></li>
+		    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#about-us">About Us</a></li>
+		    <li><a href="#apply-now" class="btn apply-now-link">Apply Now</a></li>
+		</ul>
+	    </nav>
+
+    </header>
+
+    <div id="dashboard-overlay" class="dashboard-overlay" style="display:none;">
+      <div class="dashboard-container">
+        <section id="user-dashboard">
+          <div class="container">
+            <div class="dashboard-header">
+              <h2>Your Dashboard</h2>
+              <div>
+                <button id="close-dashboard" class="btn secondary">
+                  <i class="fas fa-times"></i> Close
+                </button>
+                <button id="logout-btn" class="btn danger">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+              </div>
+            </div>
+    
+             <div class="dashboard-grid">
+               <!-- User Profile Card -->
+               <div class="dashboard-card profile-card">
+                 <h3><i class="fas fa-user"></i> Your Profile</h3>
+                 <div class="user-details">
+                   <p><strong>Name:</strong> <span id="dashboard-name"></span></p>
+                   <p><strong>Phone:</strong> <span id="dashboard-phone"></span></p>
+                   <p><strong>National ID:</strong> <span id="dashboard-national-id"></span></p>
+                   <p><strong>Email:</strong> <span id="dashboard-email"></span></p>
+                 </div>
+               </div>
+               
+               <!-- Savings Card -->
+               <div class="dashboard-card savings-card">
+                 <h3><i class="fas fa-piggy-bank"></i> Your Savings</h3>
+                 <div class="amount-display">
+                   <span id="savings-amount">0</span> Ksh
+                 </div>
+                 <div class="savings-actions">
+                   <button id="add-savings-btn" class="btn small">Add Savings</button>
+                 </div>
+               </div>
+               
+               <!-- Loan Status Card -->
+               <div class="dashboard-card loan-card">
+                 <h3><i class="fas fa-hand-holding-usd"></i> Loan Status</h3>
+                 <div id="active-loan-info">
+                   <p class="no-loan">You don't have any active loans</p>
+                   <!-- This will be populated dynamically -->
+                 </div>
+                 <div id="loan-eligibility">
+                   <p><strong>Available Limit:</strong> <span id="available-limit">0</span> Ksh</p>
+                   <p><strong>Next Loan Available In:</strong> <span id="next-loan-days">0</span> days</p>
+                 </div>
+               </div>
+             </div>
+             
+            <!-- Loan Application Button -->
+            <div class="dashboard-actions">
+              <button id="new-loan-btn" class="btn">Apply for New Loan</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Add this near your dashboard overlay -->
+    <div id="loan-application-overlay" class="dashboard-overlay" style="display:none;">
+      <div class="dashboard-container-pesa">
+        <section id="loan-application">
+          <div class="container" style="position: relative;">
+            <button class="close-btn">&times;</button>
+            <h2>Complete Your Loan Application</h2>
+    		<form id="loan-form">
+                    <div class="user-info">
+                        <p>Applying as: <span id="user-full-name"></span></p>
+                        <p>Phone: <span id="user-phone"></span></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loan-amount">Loan Amount (Ksh)</label>
+                        <input type="number" id="loan-amount" min="100" max="50000" required>
+                        <div class="savings-info" id="savings-info"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loan-term">Repayment Period</label>
+                        <select id="loan-term" required>
+                            <option value="30">30 Days</option>
+                            <option value="60">60 Days</option>
+                            <option value="90">90 Days</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn">Submit Application</button>
+                </form>
+          </div>
+        </section>
+      </div>
+    </div>
+
+<div id="savings-modal" class="dashboard-overlay" style="display:none;">
+  <div class="dashboard-container-pesa">
+    <section id="savings-application">
+      <div class="container" style="position: relative;">
+        <button class="close-btn">&times;</button>
+        <h2>Add to Your Savings</h2>
+        <form id="savings-form">
+          <div class="user-info">
+            <p>Depositing as: <span id="savings-user-name"></span></p>
+            <p>M-Pesa: <span id="savings-user-phone"></span></p>
+          </div>
+          
+          <div class="form-group">
+            <label for="savings-amount">Amount (Ksh)</label>
+            <input type="number" id="savings-amount" min="10" max="70000" required>
+            <small class="form-hint">Minimum: Ksh 10 | Maximum: Ksh 70,000</small>
+          </div>
+          
+          <div class="mpesa-confirmation" id="mpesa-confirmation" style="display:none;">
+            <div class="mpesa-animation">
+              <div class="wave-animation"></div>
+              <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h3>Confirm on Your Phone</h3>
+            <p>Check your M-Pesa menu to complete the transaction</p>
+            <div class="transaction-details">
+              <p><strong>Amount:</strong> <span id="confirm-amount">0</span> Ksh</p>
+              <p><strong>Paybill:</strong> 123456</p>
+              <p><strong>Account:</strong> SAVINGS</p>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn btn-mpesa" id="submit-savings">
+              <i class="fas fa-money-bill-wave"></i> Deposit via M-Pesa
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+
+    <main>
+        <section id="hero" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h2>Access Funds Up To Ksh 60,000</h2>
+                    <p class="highlight">Limited Time Offer!</p>
+                    <h3>Secure financing with competitive rates starting at 7.8% APR</h3>
+                    <p>Available for eligible applicants meeting our simple criteria</p>
+                    <a href="#apply-now" class="btn apply-now-link">Begin Application</a>
+                </div>
+                <div class="hero-image">
+                    <img src="img/hc.jpeg" alt="Happy customer with money">
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2>Why Choose FastCash?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-bolt"></i>
+                        <h3>Rapid Processing</h3>
+                        <p>Receive a preliminary decision within minutes through our efficient online system</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>Customizable Durations</h3>
+                        <p>Select repayment periods ranging from 1 to 3 months to suit your financial situation</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h3>Mobile Convenience</h3>
+                        <p>Download our app for seamless account management and payment tracking</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="process">
+            <div class="container">
+                <h2>Simple Application Journey</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Complete Our Form</h3>
+                        <p>Fill out our straightforward online application with basic personal and financial details</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Instant Preliminary Review</h3>
+                        <p>Our system evaluates your information immediately after submission</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Receive Your Funds</h3>
+                        <p>Approved amounts are deposited directly to your account within hours</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+   </main>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Login</button>
+                <button class="auth-tab" data-tab="signup">Register</button>
+            </div>
+            
+            <form id="login-form" class="auth-form active">
+                <div class="form-group">
+                    <label for="login-phone">M-Pesa Number</label>
+                    <input type="tel" id="login-phone" pattern="07\d{8}" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            
+            <form id="signup-form" class="auth-form">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-phone">M-Pesa Number</label>
+                    <input type="tel" id="signup-phone" pattern="07\d{8}" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-national-id">National ID</label>
+                    <input type="text" id="signup-national-id" pattern="\d{8,9}" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email (Optional)</label>
+                    <input type="email" id="signup-email">
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" minlength="6" required>
+                </div>
+                <button type="submit" class="btn">Create Account</button>
+            </form>
+        </div>
+    </div>
+     
+     <!-- Add Savings Modal -->
+     <div class="modal" id="savings-modal">
+       <div class="modal-content">
+         <span class="close-modal">&times;</span>
+         <h3>Add to Your Savings</h3>
+         <form id="add-savings-form">
+           <div class="form-group">
+             <label for="savings-amount">Amount (Ksh)</label>
+             <input type="number" id="savings-amount-input" min="100" required>
+           </div>
+           <button type="submit" class="btn">Add Savings</button>
+         </form>
+       </div>
+     </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>FastCash</h3>
+                    <p>Providing quick financial solutions when you need them most</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#hero">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#apply-now" class="apply-now-link">Apply Now</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Rates & Fees</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> +254 759405137</li>
+                        <li><i class="fas fa-envelope"></i> support@fastcash.co.ke</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Nairobi, Kenya</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 FastCash. All rights reserved.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <i class="fas fa-check-circle success-icon"></i>
+            <h2>Application Received!</h2>
+            <p>We've successfully received your loan request. Our team will review your application and contact you shortly.</p>
+            <p>For faster processing, download our mobile app to track your application status.</p>
+            <div class="modal-buttons">
+                <button class="btn" id="download-app">Download App</button>
+                <button class="btn secondary" id="close-success">Close</button>
+            </div>
+        </div>
+    </div>
+		
+    <!-- Add this modal before the closing </body> tag -->
+    <div class="modal" id="terms-modal">
+      <div class="modal-content">
+        <h2>Loan Terms & Conditions</h2>
+        <div class="terms-content">
+          <ol>
+            <li>You must have saved at least 30% of the loan amount with us to be eligible.</li>
+            <li>No refunds - You must deposit with us before requesting any loan.</li>
+            <li>Interest rate: 14% per annum.</li>
+            <li>Our agents will contact you for repayments after 5 weeks.</li>
+            <li>Maximum borrowing limit: Ksh 50,000.</li>
+            <li>Payments only accepted via M-Pesa.</li>
+            <li>Default clause: Failure to repay within 60 days will result in legal action.</li>
+            <li>Late payment penalties: 5% of due amount per week after due date.</li>
+            <li>All loans must be repaid within 90 days maximum.</li>
+            <li>We reserve the right to adjust repayment schedules based on circumstances.</li>
+          </ol>
+        </div>
+        <div class="modal-buttons">
+          <button class="btn" id="agree-terms">I Agree</button>
+          <button class="btn secondary" id="decline-terms">Decline</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="js/main.js"> </script>
+    <script type="module" src="js/auth.js"> </script>
+    <script type="module" src="js/loanController.js"> </script>
+    <script type="module" src="js/apiService.js"> </script>
+
+</body>
+</html>

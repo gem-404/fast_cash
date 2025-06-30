@@ -1,0 +1,133 @@
+/* Header Container */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 15px 20px;
+}
+
+/* Logo Styles */
+.logo h1 {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    margin: 0; /* Remove default margins */
+}
+
+/* Desktop Navigation */
+.desktop-nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    align-items: center;
+    padding: 0;
+    gap: 30px; /* Modern way to space items (replaces margins) */
+}
+
+.desktop-nav ul li {
+    margin: 0; /* Remove individual margins */
+}
+
+.desktop-nav ul li a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 600;
+    transition: var(--transition);
+    padding: 8px 12px; /* Add some padding for better click area */
+}
+
+.desktop-nav ul li a:hover {
+    color: var(--primary-color);
+}
+
+/* Apply Now button specific styles */
+.desktop-nav ul li .apply-now-link {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 5px;
+    padding: 8px 20px;
+}
+
+.desktop-nav ul li .apply-now-link:hover {
+    background-color: #3a5bef;
+    color: white;
+}
+
+.desktop-nav ul li:not(:last-child) {
+	margin-right: 30px;
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+    position: fixed;
+    top: 70px; /* Height of your header */
+    left: 0;
+    width: 100%;
+    max-height: 0;
+    background-color: var(--white);
+    z-index: 1000;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-nav.active {
+    max-height: 300px; /* Adjust based on your content height */
+    overflow-y: auto;
+}
+
+.mobile-nav ul {
+    list-style: none;
+    padding: 15px 20px;
+    margin: 0;
+}
+
+.mobile-nav ul li {
+    margin-bottom: 15px;
+}
+
+.mobile-nav ul li:last-child {
+    margin-bottom: 0;
+}
+
+.mobile-nav ul li a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 600;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+}
+
+.mobile-nav ul li a:hover {
+    background-color: rgba(74, 107, 255, 0.1);
+    color: var(--primary-color);
+}
+
+/* Mobile menu toggle button */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 5px;
+    z-index: 1001;
+}
+
+/* Close on scroll behavior */
+.scrolling .mobile-nav {
+    max-height: 0 !important;
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .desktop-nav {
+        display: none;
+    }
+}

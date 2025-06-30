@@ -1,0 +1,70 @@
+.btn {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn:hover {
+    background-color: #3a5bef;
+    transform: translateY(-2px);
+}
+
+.btn.small {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+}
+
+.btn.secondary {
+    background-color: var(--text-light);
+}
+
+.btn.secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn.danger {
+    background-color: #dc3545;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-light);
+    z-index: 2;
+}
+
+.close-btn:hover {
+    color: var(--secondary-color);
+}
+
+.btn.secondary, .btn.danger {
+  white-space: nowrap; /* Prevent button text from breaking */
+}
+
+/* Mobile specific button styles */
+@media (max-width: 768px) {
+  .dashboard-header > div {
+    width: 100%;
+  }
+  
+  .btn.secondary, .btn.danger {
+    flex: 1;
+    min-width: 0; /* Allow buttons to shrink */
+  }
+  
+  .btn i.fas {
+    margin-right: 5px;
+  }
+}

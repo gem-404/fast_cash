@@ -1,0 +1,23 @@
+.close-modal {
+    position: absolute;  /* Takes it out of normal document flow */
+    top: 15px;          /* Distance from top of parent */
+    right: 15px;        /* Distance from right of parent */
+    background: none;   /* Remove default button styles */
+    border: none;
+    padding: 5px;       /* Makes it easier to click */
+    cursor: pointer;    /* Shows it's clickable */
+    z-index: 1;         /* Ensures it stays above other content */
+    color: #666;        /* Neutral color that works on most backgrounds */
+    font-size: 1.5rem;  /* Makes the X clearly visible */
+    line-height: 1;     /* Prevents extra space around the X */
+    transition: color 0.2s ease; /* Smooth hover effect */
+}
+
+.close-modal:hover {
+    color: #333;        /* Darker on hover for better UX */
+}
+
+/* For Font Awesome icons (if using) */
+.close-modal i {
+    display: block;     /* Ensures proper spacing */
+}

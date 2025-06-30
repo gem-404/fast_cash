@@ -1,0 +1,13 @@
+
+Add login/register in the navbar (user can only click apply now, if he has session, if not, it redirects him to login/register, )
+
+if user has a session, show dashboard, when he clicks apply now... (in navbar, in main and in footer)
+
+
+add all the parts of the footer that are clickable...
+
+if a person does not qualify for a loan, we can redirect the guy into savings modal...
+
+if a person successfully saves money, and tries to apply for a loan before 7 days are over, it asks him to wait for 7 days...
+
+we can add the below label that asked the user to save a certain amount first before attempting to click on the loan modal submit button...
