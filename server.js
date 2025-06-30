@@ -11,6 +11,9 @@ const PORT = process.env.PORT || 3000;
 const DB_PATH = path.join(__dirname, "users.db");
 const db = new sqlite3.Database(DB_PATH);
 
+// Middleware to parse JSON bodies should be registered before routes that need it
+app.use(express.json());
+
 const mpesaRouter = require('./routes/mpesa');
 app.use('/api/mpesa', mpesaRouter);
 
@@ -47,7 +50,7 @@ db.serialize(() => {
 });
 
 // Middleware
-app.use(express.json());
+// app.use(express.json()); // Moved to be before mpesaRouter
 app.use(express.static(path.join(__dirname, "public")));
 
 // Authenticate user
