@@ -105,8 +105,29 @@ async function handleSavingsSubmission() {
         return;
     }
 
-    const amount = parseInt(document.getElementById('savings-amount').value);
+    const amountInput = document.getElementById('savings-amount');
+    const amountString = amountInput.value.trim();
     const submitBtn = document.getElementById('submit-savings');
+
+    if (amountString === "") {
+        showError('Amount cannot be empty. Please enter a valid amount.');
+        return;
+    }
+
+    const amount = parseInt(amountString);
+
+    if (isNaN(amount)) {
+        showError('Invalid amount. Please enter a valid number.');
+        return;
+    }
+
+    // Assuming a minimum amount of 1 based on "positive number" error.
+    // If there's a specific minimum like 100 from an HTML attribute, that could be checked too.
+    // For example: const minAmount = parseInt(amountInput.min) || 1;
+    if (amount <= 0) {
+        showError('Amount must be a positive number.');
+        return;
+    }
     
     try {
         // Show M-Pesa confirmation UI
