@@ -1,10 +1,18 @@
+import { hasActiveSession, getCurrentUser } from './userState.js';
+import { showDashboard } from './dashboard.js';
+
 export function initModals() {
     initMobileMenu();
     const authModal = document.getElementById('auth-modal');
 
     document.querySelectorAll('.close-modal').forEach(btn => {
         btn.addEventListener('click', () => {
+            // Assuming this class is primarily for the authModal.
+            // If other modals use '.active', this might need to be more specific
+            // or each modal should handle its own close button.
             authModal?.classList.remove('active');
+            // If other modals are identified by a common class like 'modal-overlay'
+            // document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
         });
     });
 
@@ -17,8 +25,14 @@ export function initModals() {
     document.querySelectorAll('.apply-now-link').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            authModal?.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (hasActiveSession()) {
+                const user = getCurrentUser();
+                showDashboard(user);
+                // showDashboard already handles removing 'active' from authModal and scrolling
+            } else {
+                authModal?.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         });
     });
 
