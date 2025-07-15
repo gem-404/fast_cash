@@ -14,8 +14,8 @@ const db = new sqlite3.Database(DB_PATH);
 // Middleware to parse JSON bodies should be registered before routes that need it
 app.use(express.json());
 
-const mpesaRouter = require('./routes/mpesa');
-app.use('/api/mpesa', mpesaRouter);
+const mpesaRouter = require("./routes/mpesa");
+app.use("/api/mpesa", mpesaRouter);
 
 // Initialize database tables
 db.serialize(() => {
@@ -277,41 +277,27 @@ app.get("/api/users/:userId/active-loan", (req, res) => {
 
   db.get(
     `SELECT * FROM loans 
-     WHERE user_id = ? AND status = 'active'
+     WHERE user_id = ? AND (status = 'active' OR status = 'pending')
      ORDER BY created_at DESC
      LIMIT 1`,
     [userId],
     (err, row) => {
       if (err) {
         console.error("Database error:", err);
-        return res.status(500).json({
-          error: "Database error",
-          details:
-            process.env.NODE_ENV === "development" ? err.message : undefined,
-        });
+        return res.status(500).json({ error: "Database error" });
       }
 
       if (!row) {
-        return res.json({
-          hasActiveLoan: false,
-          message: "No active loan found",
-        });
+        return res.status(404).json({ hasLoan: false });
       }
 
-      // Ensure all numeric values are properly formatted
+      // Return the loan data directly (not nested)
       res.json({
-        hasActiveLoan: true,
-        loan: {
-          id: row.id,
-          amount: row.amount || 0, // Fallback to 0 if undefined
-          term: row.term || 0,
-          status: row.status || "unknown",
-          created_at: row.created_at,
-          formattedAmount: (row.amount || 0).toLocaleString("en-KE", {
-            style: "currency",
-            currency: "KES",
-          }),
-        },
+        id: row.id,
+        amount: row.amount || 0,
+        term: row.term || 0,
+        status: row.status || "unknown",
+        created_at: row.created_at,
       });
     },
   );

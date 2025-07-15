@@ -3,20 +3,6 @@ import { updateDashboard } from "./dashboard.js";
 import { showError, showSuccess } from "./uiHelpers.js";
 import { getCurrentUser } from "./userState.js";
 
-// export function initSavings() {
-//     document.getElementById('add-savings-form').addEventListener('submit', async (e) => {
-//       e.preventDefault();
-//       const amount = parseInt(document.getElementById('savings-amount-input').value);
-//       const result = await ApiService.addSavings(currentUser.id, amount);
-//       if (result.success) {
-//         updateDashboard(currentUser.id);
-//         showSuccess('Savings added successfully');
-//       } else {
-//         showError('Failed to add savings');
-//       }
-//     });
-// }
-
 export function initSavings() {
   const savingsForm = document.getElementById("savings-form");
   const closeBtn = document.querySelector("#savings-modal .close-btn");
@@ -55,47 +41,6 @@ function closeSavingsModal() {
   document.getElementById("mpesa-confirmation").style.display = "none";
 }
 
-// async function handleSavingsSubmission() {
-//     const user = getCurrentUser();
-//     if (!user) {
-//         showError('Session expired. Please login again.');
-//         return;
-//     }
-//
-//     const amount = parseInt(document.getElementById('savings-amount').value);
-//     const submitBtn = document.getElementById('submit-savings');
-//
-//     try {
-//         // Show M-Pesa confirmation UI
-//         document.getElementById('confirm-amount').textContent = amount;
-//         document.getElementById('mpesa-confirmation').style.display = 'block';
-//         submitBtn.disabled = true;
-//         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-//
-//         // Simulate M-Pesa payment processing
-//         await new Promise(resolve => setTimeout(resolve, 45000));
-//
-//         // Submit to backend
-//         const result = await ApiService.addSavings(user.id, amount);
-//
-//         // Show success and close after delay
-//         showSuccess(`Successfully deposited ${amount} Ksh to your savings`);
-//         setTimeout(() => {
-//             closeSavingsModal();
-//             if (window.updateDashboard) {
-//                 window.updateDashboard(user.id);
-//             }
-//         }, 1500);
-//
-//     } catch (error) {
-//         showError(error.message);
-//         document.getElementById('mpesa-confirmation').style.display = 'none';
-//     } finally {
-//         submitBtn.disabled = false;
-//         submitBtn.innerHTML = '<i class="fas fa-money-bill-wave"></i> Deposit via M-Pesa';
-//     }
-// }
-
 async function handleSavingsSubmission() {
   const user = getCurrentUser();
   if (!user) {
@@ -113,6 +58,7 @@ async function handleSavingsSubmission() {
   }
 
   const amount = amountString;
+  console.log(amount);
 
   if (isNaN(amount)) {
     showError("Invalid amount. Please enter a valid number.");
@@ -135,12 +81,18 @@ async function handleSavingsSubmission() {
     submitBtn.innerHTML =
       '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
+	const formatPhone = (phone) => {
+	  return phone.startsWith("0")
+	    ? phone.replace(/^0/, "254")
+	    : phone;
+	};
+
     // Initiate M-Pesa payment
     const response = await fetch("/api/mpesa/initiate-stk", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        phone: user.phone,
+        phone: formatPhone(user.phone),
         amount: amount,
       }),
     });
@@ -177,8 +129,6 @@ async function handleSavingsSubmission() {
 // Simplified payment status check
 async function checkPaymentStatus(checkoutId) {
   return new Promise((resolve) => {
-    // In real implementation, you would poll your backend
-    // which would check the M-Pesa callback
-    setTimeout(resolve, 45000); // Simulate 45 sec wait
+    setTimeout(resolve, 4000); // Simulate 4 sec wait
   });
 }

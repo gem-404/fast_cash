@@ -47,3 +47,29 @@
     border-radius: 4px;
     z-index: 1000;
 }
+
+/* Dashboard loan info styles */
+#active-loan-info {
+  background-color: var(--background-light);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+#active-loan-info h4 {
+  color: var(--primary-color);
+  margin-top: 0;
+}
+
+#loan-eligibility {
+  margin-top: 20px;
+}
+
+#loan-eligibility p {
+  margin-bottom: 8px;
+}
+
+.no-loan {
+  color: var(--success-color);
+  font-style: italic;
+}

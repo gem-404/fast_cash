@@ -1,93 +1,112 @@
-// routes/mpesa.js
 const express = require("express");
 const unirest = require("unirest");
 const router = express.Router();
 
-const CONSUMER_KEY = "3YIeD5pf1zxQjR9KiqMlndHoetQzYgiO4DWqZrMcbd5TnHsb";
-const CONSUMER_SECRET =
-  "y6AGHi37u2THtfGX14w8lUgFg8Y73AlwS0mAdelxQ4adNXEIORgNjgTl9b7WTP8r";
+// Safaricom credentials
+const consumerKey = "aOZC0w2d8rKuGcmAGowoPn3G99taevRnzAxpdSjmd27HYC0Z";
+const consumerSecret = "yXdDc3ZdmxvwADEDd8aj8RJNfXjVW4SEEoDpeHbxOa3IlqPxD6bCPRLiAJtR0oga";
+const shortCode = "174379";
+const passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"; // Lipa na MPESA passkey
+const partyA = 254757095442
 
-// Generate access token
-async function getAccessToken() {
-  return new Promise((resolve, reject) => {
-    const req = unirest(
-      "GET",
-      "https://sandbox.safaricom.co.ke/oauth/v1/generate",
-    );
-
-    req.query({ grant_type: "client_credentials" });
-
-    req.headers({
-      Authorization: `Basic ${Buffer.from(`${CONSUMER_KEY}:${CONSUMER_SECRET}`).toString("base64")}`,
-    });
-
-    req.end((res) => {
-      if (res.error) return reject(res.error);
-      resolve(res.body.access_token);
-    });
-  });
+// Util to generate timestamp
+function generateTimestamp() {
+  return new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14);
 }
 
-// Initiate M-Pesa STK Push
+// POST /initiate-stk
 router.post("/initiate-stk", async (req, res) => {
+  const { phone, amount } = req.body;
+
+  if (!phone || !amount) {
+    return res.status(400).json({ error: "Phone and amount are required" });
+  }
+
   try {
-    const { phone, amount } = req.body;
-    const accessToken = await getAccessToken();
+    // Step 1: Generate base64 encoded credentials
+    const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
 
-    const timestamp = new Date()
-      .toISOString()
-      .replace(/[^0-9]/g, "")
-      .slice(0, -3);
+    // Step 2: Request access token
+    unirest('GET', 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials')
+      .headers({ 'Authorization': `Basic ${auth}` })
+      .end(authRes => {
+        if (authRes.error) {
+          console.error("Auth error:", authRes.error);
+          return res.status(500).json({ error: "Failed to authenticate with Safaricom" });
+        }
 
-    const password = Buffer.from(
-      `174379${timestamp}`,
-    ).toString("base64");
+        const accessToken = JSON.parse(authRes.raw_body).access_token;
 
-    const stkRequest = await unirest(
-      "POST",
-      "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
-    )
-      .headers({
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      })
-      .send({
-        BusinessShortCode: "174379",
-        Password: password,
-        Timestamp: timestamp,
-        TransactionType: "CustomerPayBillOnline",
-        Amount: amount,
-        PartyA: phone,
-        PartyB: "174379",
-        PhoneNumber: phone,
-        CallBackURL: "YOUR_CALLBACK_URL",
-        AccountReference: "SAVINGS",
-        TransactionDesc: "FastCash Savings Deposit",
+        // Step 3: Generate timestamp and password
+        const timestamp = generateTimestamp();
+        const password = Buffer.from(shortCode + passkey + timestamp).toString('base64');
+
+        // Step 4: STK Push request
+        unirest('POST', 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest')
+          .headers({
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          })
+          .send(JSON.stringify({
+            "BusinessShortCode": shortCode,
+            "Password": password,
+            "Timestamp": timestamp,
+            "TransactionType": "CustomerPayBillOnline",
+            "Amount": amount,
+            "PartyA": `${partyA}`,
+            "PartyB": shortCode,
+            "PhoneNumber": phone,
+            "CallBackURL": "https://yourdomain.com/api/mpesa/callback",
+            "AccountReference": "CompanyXLTD",
+            "TransactionDesc": "Payment of X"
+          }))
+          .end(stkRes => {
+            if (stkRes.error) {
+              console.error("STK Push Failed:", stkRes.error);
+              return res.status(500).json({ error: "STK Push failed" });
+            }
+
+            console.log("STK Push Success:", stkRes.raw_body);
+            const responseBody = JSON.parse(stkRes.raw_body);
+
+            res.json({
+              success: true,
+              checkoutId: responseBody.CheckoutRequestID,
+              response: responseBody
+            });
+          });
       });
-
-    res.json({
-      success: true,
-      checkoutId: stkRequest.body.CheckoutRequestID,
-    });
-  } catch (error) {
-    console.error("STK Push Error:", error);
-    res.status(500).json({ error: "Payment processing failed" });
+  } catch (err) {
+    console.error("Unexpected Error:", err);
+    res.status(500).json({ error: "Internal Server Error", details: err.message });
   }
 });
 
-// Handle M-Pesa callback
+// POST /callback
 router.post("/callback", (req, res) => {
-  const result = req.body.Body.stkCallback;
+  try {
+    const result = req.body.Body?.stkCallback;
 
-  if (result.ResultCode === 0) {
-    // Payment successful
-    // Save to database here
-    console.log("Payment successful:", result);
-  } else {
-    console.log("Payment failed:", result.ResultDesc);
+    if (!result) throw new Error("Invalid callback format");
+
+    if (result.ResultCode === "0") {
+      console.log("Payment successful:", {
+        amount: result.CallbackMetadata?.Item.find(i => i.Name === "Amount")?.Value,
+        receipt: result.CallbackMetadata?.Item.find(i => i.Name === "MpesaReceiptNumber")?.Value,
+        phone: result.CallbackMetadata?.Item.find(i => i.Name === "PhoneNumber")?.Value,
+        date: result.CallbackMetadata?.Item.find(i => i.Name === "TransactionDate")?.Value
+      });
+
+      // TODO: Save to DB
+    } else {
+      console.log("Payment failed:", result.ResultDesc);
+    }
+
+    res.status(200).json({ status: "received" });
+  } catch (err) {
+    console.error("Callback Error:", err);
+    res.status(400).json({ error: "Bad callback data" });
   }
-
-  res.status(200).end();
 });
 
 module.exports = router;

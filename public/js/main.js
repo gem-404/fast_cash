@@ -3,6 +3,7 @@ import { initAuth } from './authController.js';
 import { initDashboard } from './dashboard.js';
 import { initLoanApp } from './loanController.js';
 import { initSavings } from './savingsController.js';
+import { initInfoModals } from './modals.js';
 import { clearCurrentUser, hasActiveSession, getCurrentUser } from './userState.js';
 
 
@@ -64,6 +65,7 @@ document.getElementById('logout-btn')?.addEventListener('click', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   initResponsiveManager();
+  initInfoModals();
   initModals();
   initAuth();
   initDashboard();
