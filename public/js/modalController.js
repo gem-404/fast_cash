@@ -1,14 +1,31 @@
+<<<<<<< HEAD
 import { showDashboard } from "./dashboard.js";
 import { getCurrentUser, hasActiveSession } from "./userState.js";
+=======
+import { hasActiveSession, getCurrentUser } from './userState.js';
+import { showDashboard } from './dashboard.js';
+>>>>>>> refs/remotes/main/fix/mpesa-body-parser
 
 export function initModals() {
   initMobileMenu();
   const authModal = document.getElementById("auth-modal");
 
+<<<<<<< HEAD
   // Initialize auth modal
   document.querySelectorAll(".close-modal").forEach((btn) => {
     btn.addEventListener("click", () => {
       authModal?.classList.remove("active");
+=======
+    document.querySelectorAll('.close-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Assuming this class is primarily for the authModal.
+            // If other modals use '.active', this might need to be more specific
+            // or each modal should handle its own close button.
+            authModal?.classList.remove('active');
+            // If other modals are identified by a common class like 'modal-overlay'
+            // document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+        });
+>>>>>>> refs/remotes/main/fix/mpesa-body-parser
     });
   });
 
@@ -26,6 +43,7 @@ export function initModals() {
     });
   });
 
+<<<<<<< HEAD
   document.querySelectorAll(".show-dashboard-now").forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
@@ -37,6 +55,20 @@ export function initModals() {
         authModal?.classList.add("active");
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
+=======
+    document.querySelectorAll('.apply-now-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (hasActiveSession()) {
+                const user = getCurrentUser();
+                showDashboard(user);
+                // showDashboard already handles removing 'active' from authModal and scrolling
+            } else {
+                authModal?.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+>>>>>>> refs/remotes/main/fix/mpesa-body-parser
     });
   });
 

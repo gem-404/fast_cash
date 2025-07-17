@@ -1,0 +1,33 @@
+<div id="loan-application-overlay" class="dashboard-overlay" style="display:none;">
+    <div class="dashboard-container">
+        <section id="loan-application">
+            <div class="container" style="position: relative;">
+                <button class="close-btn">×</button>
+                <h2>Complete Your Loan Application</h2>
+                <form id="loan-form">
+                    <div class="user-info">
+                        <p>Applying as: <span id="user-full-name"></span></p>
+                        <p>Phone: <span id="user-phone"></span></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loan-amount">Loan Amount (Ksh)</label>
+                        <input type="number" id="loan-amount" min="100" max="50000" required>
+                        <div class="savings-info" id="savings-info"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loan-term">Repayment Period</label>
+                        <select id="loan-term" required>
+                            <option value="30">30 Days</option>
+                            <option value="60">60 Days</option>
+                            <option value="90">90 Days</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn">Submit Application</button>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
