@@ -2,12 +2,14 @@ const express = require("express");
 const unirest = require("unirest");
 const router = express.Router();
 
+require("dotenv").config();
+
 // Safaricom credentials
-const consumerKey = "aOZC0w2d8rKuGcmAGowoPn3G99taevRnzAxpdSjmd27HYC0Z";
-const consumerSecret = "yXdDc3ZdmxvwADEDd8aj8RJNfXjVW4SEEoDpeHbxOa3IlqPxD6bCPRLiAJtR0oga";
-const shortCode = "174379";
-const passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"; // Lipa na MPESA passkey
-const partyA = 254757095442
+const consumerKey = process.env.CONSUMER_KEY;
+const consumerSecret = process.env.CONSUMER_SECRET;
+const shortCode = process.env.SHORTCODE;
+const passkey = process.env.PASSKEY; // Lipa na MPESA passkey
+const partyA = parseInt(process.env.PARTYA);
 
 // Util to generate timestamp
 function generateTimestamp() {
